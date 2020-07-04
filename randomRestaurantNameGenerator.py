@@ -9,19 +9,25 @@ currentHour = float(currentTime.split()[3][0:2])
 currentDOW = str(currentTime.split()[0])
 currentLine = 0
 
-writeLogFileName = 'randomRestaurantNameGeneratorLog' + str(date.today()) + '.txt'
+writeLogFileName = 'randomRestaurantNameGeneratorLog' + str(date.today()) + '.log'
 writeLog = open(writeLogFileName, 'w', encoding='cp1252')
 
+
 def restaurantIsOpen(openTime, closeTime):
+    """ Returns True if the restaurant is currently open (based on the current time of the system)."""
+    if openTime == 24 and closeTime == 24:
+        return True
     return currentHour >= openTime and currentHour < closeTime
 
-def checkValidNumber(input):
+def checkValidRating(input):
+    """" Returns the input as a float if it is a valid rating, else gives '6' as a rating to put more weight to the restaurant."""
     if input == '#DIV/0!':
-        return float(3)
+        return float(6)
     else:
         return float(input)
 
 def isWeekend():
+    """" Returns True if it is the weekend. """
     if currentDOW == 'Fri' or currentDOW == 'Sat' or currentDOW == 'Sun':
         return True
     else:
@@ -66,7 +72,7 @@ if len(possibleEntries) == 0:
     print("There is currently nothing open! If this is incorrect, check log for more details.")
 else:
     winningEntry = random.randrange(len(possibleEntries))
-    writeLog.write('[' + str(datetime.now()) + '] Winning entry: ' + winningEntry + ' possibleEntries[winningEntry] = ' + possibleEntries[winningEntry] + '\n')
+    writeLog.write('[' + str(datetime.now()) + '] Winning entry: ' + str(winningEntry) + '...\t possibleEntries[' + str(winningEntry) + '] = ' + str(possibleEntries[winningEntry]) + '\n')
     print(possibleEntries[winningEntry])
 
 inputFile.close()

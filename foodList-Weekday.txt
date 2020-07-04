@@ -24,8 +24,8 @@ Gourmandise	4	4	3	9	21
 Spitz	3	4.5	4	11	20
 Red_Iguana	2	3.5	4	11	21
 Pretty_Bird	3	4	4	11	16
-Hanaya_Poke	3	5	4	11	22
-Little_Caesars	5	1.5	5	10	23
+Hanaya_Poke	3	5	4	11	21.5
+Little_Caesars	5	1.5	5	10.5	20.5
 Mod_pizza	3	3.25	5	11	22
 Cubby's	3	5	4.5	11	21
 Settobello	3	5	5	11	20
