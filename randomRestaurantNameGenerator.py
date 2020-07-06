@@ -1,13 +1,13 @@
 import random
 from time import time, ctime
 from datetime import datetime, date
-global currentHour, currentDOW, inputFile, currentLine
+global currentHour, currentDOW, inputFile
 
 possibleDestinations = {}
 currentTime = ctime(time())
 currentHour = float(currentTime.split()[3][0:2])
 currentDOW = str(currentTime.split()[0])
-currentLine = 0
+print(currentTime)
 
 writeLogFileName = 'randomRestaurantNameGeneratorLog' + str(date.today()) + '.log'
 writeLog = open(writeLogFileName, 'w', encoding='cp1252')
@@ -33,29 +33,42 @@ def isWeekend():
     else:
         return False
 
-if isWeekend():
-    inputFile = open('foodList-Weekend.txt', 'r', encoding='cp1252')
-    writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(isWeekend()) + '\t Reading inputs from: foodList-Weekend.txt\n')
-else:
-    inputFile = open('foodList-Weekday.txt', 'r', encoding='cp1252')
-    writeLog.write('[' + str(datetime.now()) + '] Is Weekend: ' + str(isWeekend()) + '\t Reading inputs from: foodList-Weekday.txt\n')
+currentlyWeekend = isWeekend()
+writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend))
 
+inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
 for line in inputFile:
     input = line.split()
     restaurantName = input[0]
-    restaurantDistanceRating = checkValidNumber(input[1])
-    restaurantFoodRating = checkValidNumber(input[2])
-    restaurantCostRating = checkValidNumber(input[3])
-    restaurantOpenTime = float(input[4])
-    restaurantCloseTime = float(input[5])
-    writeLog.write('[' + str(datetime.now()) + ']: Reading Line:' + str(currentLine) + ' Parsing Restaurant:' + restaurantName + '\tdistance rating: ' + str(restaurantDistanceRating) + '\tfood rating: ' + str(restaurantFoodRating) + '\tcost rating: ' + str(restaurantCostRating) + '\toperating hours: ' + str(restaurantOpenTime) + '/' + str(restaurantCloseTime) + '\n')
+    restaurantCategory = input[1]
+    restaurantDistanceRating = checkValidRating(input[2])
+    restaurantFoodRating = checkValidRating(input[3])
+    restaurantCostRating = checkValidRating(input[4])
+    restaurantWeekdayOpenTime = float(input[5])
+    restaurantWeekdayCloseTime = float(input[6])
+    restaurantWeekendOpenTime = float(input[7])
+    restaurantWeekendCloseTime = float(input[8])
+    writeLog.write('[' + str(datetime.now()) + ']: Reading Line:' + str(len(possibleDestinations.keys)) 
+    + ' Parsing Restaurant:' + restaurantName + ' \t Restaurant Category:' + restaurantCategory 
+    + '\tdistance rating: ' + str(restaurantDistanceRating) + '\tfood rating: ' + str(restaurantFoodRating) + '\tcost rating: ' + str(restaurantCostRating) 
+    + '\t weekday operating hours: ' + str(restaurantWeekdayOpenTime) + '/' + str(restaurantWeekdayCloseTime) 
+    + '\t weekend operating hours: ' + str(restaurantWeekendOpenTime) + '/' + str(restaurantWeekendCloseTime) + '\n')
 
     if restaurantName in possibleDestinations:
+        writeLog.write('[' + str(datetime.now()) + ']: Found Duplicate Restaurant Name entry in file. Are you sure this is correct?')
         continue
-    elif restaurantIsOpen(restaurantOpenTime, restaurantCloseTime):
+    if currentlyWeekend:
+        writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekend Open Time.\n')
+        restaurantOpenTime = restaurantWeekendOpenTime
+        restaurantCloseTime = restaurantWeekendCloseTime
+    else:
+        writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekday Open Time.\n')
+        restaurantOpenTime = restaurantWeekdayOpenTime
+        restaurantCloseTime = restaurantWeekdayCloseTime
+
+    if restaurantIsOpen(restaurantOpenTime, restaurantCloseTime):
         writeLog.write('[' + str(datetime.now()) + ']: Added Currently Open Restaurant:' + restaurantName + '\tdistance rating: ' + str(restaurantDistanceRating) + '\tfood rating: ' + str(restaurantFoodRating) + '\tcost rating: ' + str(restaurantCostRating) + '\toperating hours: ' + str(restaurantOpenTime) + '/' + str(restaurantCloseTime) + '\n')
-        possibleDestinations[restaurantName] = ((restaurantDistanceRating + restaurantFoodRating + restaurantCostRating)*1000)
-    currentLine+=1
+        possibleDestinations[restaurantName] = (((restaurantDistanceRating+1) + restaurantFoodRating + restaurantCostRating)*1000)
 
 writeLog.write('[' + str(datetime.now()) + '] Finished parsing and adding unique restaurants. Now starting the process of returning random restaurant choice.\n')
 
