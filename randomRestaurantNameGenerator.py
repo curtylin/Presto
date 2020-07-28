@@ -2,7 +2,7 @@ import random
 from time import time, ctime
 from datetime import datetime, date
 from builtins import input
-global currentHour, currentDOW, inputFile
+global currentHour, currentMinutes, currentDOW, inputFile
 
 class Restaurant:
     name = ''
@@ -28,15 +28,21 @@ class Restaurant:
         self.weekendCloseTime = wkendClose
         self.totalRating = totalRating
 
-def restaurantIsOpen(openTime, closeTime):
+def restaurantWillBeOpen(openTime, closeTime, restaurantDistanceRating):
     """ Returns True if the restaurant is currently open (based on the current time of the system)."""
     if openTime == 24 and closeTime == 24:
         return True
-    return currentHour >= openTime and currentHour < closeTime
+    minutesToDestination = (30-5*(restaurantDistanceRating - 1))/2
+    currentTimeConverted = currentHour + currentMinutes/60
+    timeAtDestination = currentTimeConverted + minutesToDestination/60
+    writeLog.write('[' + str(datetime.now()) + '] Time At Arrival: ' + str(timeAtDestination)+ '\n')
+    return timeAtDestination >= openTime and timeAtDestination < closeTime
 
 def parseFoodRating(inputFoodRating):
     """" Returns the input as a float if it is a valid rating, else gives '6' as a rating to put more weight to the restaurant since it has not been visited before."""
-    if inputFoodRating == '#DIV/0!':
+    if inputFoodRating == '#DIV/0!' and userFeelsAdventurous:
+        return float(99)
+    elif inputFoodRating == '#DIV/0!':
         return float(6)
     else:
         return float(inputFoodRating)
@@ -67,8 +73,9 @@ def isWeekend():
 possibleDestinations = {}
 currentTime = ctime(time())
 currentHour = float(currentTime.split()[3][0:2])
+currentMinutes = float(currentTime.split()[3][3:5])
 currentDOW = str(currentTime.split()[0])
-print('Current Time:' +currentTime)
+print('Current Time: ' +currentTime)
 
 writeLogFileName = 'randomRestaurantNameGeneratorLog' + str(date.today()) + '.log'
 writeLog = open(writeLogFileName, 'w', encoding='cp1252')
@@ -84,9 +91,15 @@ writeLog.write('[' + str(datetime.now()) + '] userIsReallyHungry?:' + str(userIs
 
 userCheapinput = input("Do you currently want to spend less? (y/n): ")
 userWantsCheapEat = False
-if userHungerinput == 'Yes' or userHungerinput == 'y'or userHungerinput == 'Y':
+if userCheapinput == 'Yes' or userCheapinput == 'y'or userCheapinput == 'Y':
     userWantsCheapEat = True
 writeLog.write('[' + str(datetime.now()) + '] userWantsCheapEat?:' + str(userWantsCheapEat)+ '\n')
+
+userAdventurousinput = input("Do you want to try something new? (y/n): ")
+userFeelsAdventurous = False
+if userAdventurousinput == 'Yes' or userAdventurousinput == 'y'or userAdventurousinput == 'Y':
+    userFeelsAdventurous = True
+writeLog.write('[' + str(datetime.now()) + '] userFeelsAdventurous?:' + str(userFeelsAdventurous)+ '\n')
 
 inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
 for line in inputFile:
@@ -109,16 +122,27 @@ for line in inputFile:
     if restaurantName in possibleDestinations:
         writeLog.write('[' + str(datetime.now()) + ']: Found Duplicate Restaurant Name entry in file. Are you sure this is correct?')
         continue
+
     if currentlyWeekend:
-        writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekend Open Time.\n')
+        writeLog.write('[' + str(datetime.now()) + ']: Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekend Open Time.\n')
         restaurantOpenTime = restaurantWeekendOpenTime
         restaurantCloseTime = restaurantWeekendCloseTime
     else:
-        writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekday Open Time.\n')
+        writeLog.write('[' + str(datetime.now()) + ']: Is weekend?: ' + str(currentlyWeekend) + '\t Using Weekday Open Time.\n')
         restaurantOpenTime = restaurantWeekdayOpenTime
         restaurantCloseTime = restaurantWeekdayCloseTime
 
-    if restaurantIsOpen(restaurantOpenTime, restaurantCloseTime):
+    if (userWantsCheapEat and restaurantCostRating == 0) or (restaurantDistanceRating == 0 and userIsReallyHungry):
+        continue
+
+    if restaurantWillBeOpen(restaurantOpenTime, restaurantCloseTime, restaurantDistanceRating):
+        if userFeelsAdventurous:
+            if restaurantFoodRating == 99:
+                writeLog.write('[' + str(datetime.now()) + ']: Added Currently Open Restaurant:' + restaurantName + '\tdistance rating: ' + str(restaurantDistanceRating) + '\tfood rating: ' + str(restaurantFoodRating) + '\tcost rating: ' + str(restaurantCostRating) + '\toperating hours: ' + str(restaurantOpenTime) + '/' + str(restaurantCloseTime) + '\n')
+                totalRating = (((restaurantDistanceRating) + restaurantFoodRating + restaurantCostRating)*1000)
+                possibleDestinations[restaurantName] = Restaurant(restaurantName, restaurantCategory, restaurantDistanceRating, restaurantFoodRating, restaurantCostRating, restaurantWeekdayOpenTime, restaurantWeekdayCloseTime, restaurantWeekendOpenTime, restaurantWeekendCloseTime, totalRating)
+                continue
+            continue
         writeLog.write('[' + str(datetime.now()) + ']: Added Currently Open Restaurant:' + restaurantName + '\tdistance rating: ' + str(restaurantDistanceRating) + '\tfood rating: ' + str(restaurantFoodRating) + '\tcost rating: ' + str(restaurantCostRating) + '\toperating hours: ' + str(restaurantOpenTime) + '/' + str(restaurantCloseTime) + '\n')
         totalRating = (((restaurantDistanceRating) + restaurantFoodRating + restaurantCostRating)*1000)
         possibleDestinations[restaurantName] = Restaurant(restaurantName, restaurantCategory, restaurantDistanceRating, restaurantFoodRating, restaurantCostRating, restaurantWeekdayOpenTime, restaurantWeekdayCloseTime, restaurantWeekendOpenTime, restaurantWeekendCloseTime, totalRating)
