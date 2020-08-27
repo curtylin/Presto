@@ -87,19 +87,19 @@ userHungerinput = input("Are you currently really hungry? (y/n): ")
 userIsReallyHungry = False
 if userHungerinput == 'Yes' or userHungerinput == 'y'or userHungerinput == 'Y':
     userIsReallyHungry = True
-writeLog.write('[' + str(datetime.now()) + '] userIsReallyHungry?:' + str(userIsReallyHungry)+ '\n')
+writeLog.write('[' + str(datetime.now()) + '] userIsReallyHungry:' + str(userIsReallyHungry)+ '\n')
 
 userCheapinput = input("Do you currently want to spend less? (y/n): ")
 userWantsCheapEat = False
 if userCheapinput == 'Yes' or userCheapinput == 'y'or userCheapinput == 'Y':
     userWantsCheapEat = True
-writeLog.write('[' + str(datetime.now()) + '] userWantsCheapEat?:' + str(userWantsCheapEat)+ '\n')
+writeLog.write('[' + str(datetime.now()) + '] userWantsCheapEat:' + str(userWantsCheapEat)+ '\n')
 
 userAdventurousinput = input("Do you want to try something new? (y/n): ")
 userFeelsAdventurous = False
 if userAdventurousinput == 'Yes' or userAdventurousinput == 'y'or userAdventurousinput == 'Y':
     userFeelsAdventurous = True
-writeLog.write('[' + str(datetime.now()) + '] userFeelsAdventurous?:' + str(userFeelsAdventurous)+ '\n')
+writeLog.write('[' + str(datetime.now()) + '] userFeelsAdventurous:' + str(userFeelsAdventurous)+ '\n')
 
 inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
 for line in inputFile:
@@ -157,16 +157,23 @@ for restaurant in possibleDestinations:
 
 writeLog.write('[' + str(datetime.now()) + '] Finished adding restaurant entries.\n')
 
+userIsSatisfiedWithResult = False
+
 if len(possibleEntries) == 0:
     writeLog.write('[' + str(datetime.now()) + '] List of possibleEntries is empty! \n')
     print("There is currently nothing open! If this is incorrect, check log for more details.")
 else:
-    winningEntry = random.randrange(len(possibleEntries))
-    writeLog.write('[' + str(datetime.now()) + '] Winning entry: ' + str(winningEntry) + '...\t possibleEntries[' + str(winningEntry) + '] = ' + str(possibleEntries[winningEntry]) + '\n')
-    print('The result is: ' + possibleEntries[winningEntry] + '. They close at: ' + str(possibleDestinations[possibleEntries[winningEntry]].weekendCloseTime))
+    while(not userIsSatisfiedWithResult):
+        winningEntry = random.randrange(len(possibleEntries))
+        writeLog.write('[' + str(datetime.now()) + '] Winning entry: ' + str(winningEntry) + '...\t possibleEntries[' + str(winningEntry) + '] = ' + str(possibleEntries[winningEntry]) + '\n')
+        print('The result is: ' + possibleEntries[winningEntry] + '. They close at: ' + str(possibleDestinations[possibleEntries[winningEntry]].weekendCloseTime))
+        userIsSatisfiedWithResultInput = input("Are you satisfied with this result? (y/n): ")
+        if userIsSatisfiedWithResultInput == 'Yes' or userIsSatisfiedWithResultInput == 'y'or userIsSatisfiedWithResultInput == 'Y':
+            userIsSatisfiedWithResult = True
+        writeLog.write('[' + str(datetime.now()) + '] userIsSatisfiedWithResult:' + str(userFeelsAdventurous)+ '\n')
 
 
 inputFile.close()
 writeLog.write('[' + str(datetime.now()) + '] Closing inputFile and writeLog. Expected EOM.\n')
-userCheapinput = input("--End of Program. Press any key to close the window.--")
+userEndedProgram = input("----- End of Program. Press any key to close the window. -----")
 writeLog.close()
