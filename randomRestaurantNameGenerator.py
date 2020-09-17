@@ -159,19 +159,27 @@ writeLog.write('[' + str(datetime.now()) + '] Finished adding restaurant entries
 
 userIsSatisfiedWithResult = False
 
-if len(possibleEntries) == 0:
-    writeLog.write('[' + str(datetime.now()) + '] List of possibleEntries is empty! \n')
-    print("There is currently nothing open! If this is incorrect, check log for more details.")
-else:
-    while(not userIsSatisfiedWithResult):
+
+while(not userIsSatisfiedWithResult):
+    if len(possibleEntries) == 0:
+        writeLog.write('[' + str(datetime.now()) + '] List of possibleEntries is empty! \n')
+        print("There is currently nothing open! If this is incorrect, check log for more details.")
+        break
+    else:
         winningEntry = random.randrange(len(possibleEntries))
+        chosenRestaurantName = possibleEntries[winningEntry]
         writeLog.write('[' + str(datetime.now()) + '] Winning entry: ' + str(winningEntry) + '...\t possibleEntries[' + str(winningEntry) + '] = ' + str(possibleEntries[winningEntry]) + '\n')
         print('The result is: ' + possibleEntries[winningEntry] + '. They close at: ' + str(possibleDestinations[possibleEntries[winningEntry]].weekendCloseTime))
         userIsSatisfiedWithResultInput = input("Are you satisfied with this result? (y/n): ")
         if userIsSatisfiedWithResultInput == 'Yes' or userIsSatisfiedWithResultInput == 'y'or userIsSatisfiedWithResultInput == 'Y':
             userIsSatisfiedWithResult = True
+        else:
+            unsatisfiedResultEntries = possibleDestinations[chosenRestaurantName].totalRating
+            for i in range(len(possibleEntries)):
+                if possibleEntries[i] == chosenRestaurantName:
+                    del possibleEntries[i:i+int(unsatisfiedResultEntries)]
+                    break
         writeLog.write('[' + str(datetime.now()) + '] userIsSatisfiedWithResult:' + str(userFeelsAdventurous)+ '\n')
-
 
 inputFile.close()
 writeLog.write('[' + str(datetime.now()) + '] Closing inputFile and writeLog. Expected EOM.\n')
