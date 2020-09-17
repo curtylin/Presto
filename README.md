@@ -16,9 +16,9 @@
   
   Once you have the input txtfile completed, change the input textfile that contains all of the user's perferred taste in restaurants in line 104:
 
-    ```python
-    inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
-    ```
+```python
+inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
+```
 
 
 
