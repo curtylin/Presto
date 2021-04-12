@@ -78,7 +78,7 @@ currentDOW = str(currentTime.split()[0])
 print('Current Time: ' +currentTime)
 
 writeLogFileName = 'randomRestaurantNameGeneratorLog' + str(date.today()) + '.log'
-writeLog = open(writeLogFileName, 'w', encoding='cp1252')
+writeLog = open(writeLogFileName, 'w')
 
 currentlyWeekend = isWeekend()
 writeLog.write('[' + str(datetime.now()) + '] Is weekend?: ' + str(currentlyWeekend)+ '\n')
@@ -101,7 +101,7 @@ if userAdventurousinput == 'Yes' or userAdventurousinput == 'y'or userAdventurou
     userFeelsAdventurous = True
 writeLog.write('[' + str(datetime.now()) + '] userFeelsAdventurous:' + str(userFeelsAdventurous)+ '\n')
 
-inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
+inputFile = open('restaurantsList.txt', 'r')
 for line in inputFile:
     currentLine = line.split()
     restaurantName = currentLine[0]
