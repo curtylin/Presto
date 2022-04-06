@@ -33,9 +33,21 @@
   
   Once you have the input txtfile completed, change the input textfile that contains all of the user's perferred taste in restaurants in line 104:
 
-```python
-inputFile = open('restaurantsList.txt', 'r', encoding='cp1252')
+
+## Packages Used:
+ - Google Firebase
+ - Yelp Fusion API
+ - Next.JS - front end
+ - FastAPI - back end
+
+To run the front end:
+```
+yarn dev
 ```
 
+To run the back end, open the venv in api:
+```
+uvicorn main:app --reload
+```
 
 
