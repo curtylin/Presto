@@ -1,3 +1,13 @@
 
 *.log
 presto/api/venv/lib64
+api/venv
+
+node_modules
+package-lock.json
+
+firestore_apikey.json
+
+/node_modules
+/.pnp
+.pnp.js

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start-api": "cd api && uvicorn main:app --reload"
   },
   "dependencies": {
     "next": "12.1.4",
